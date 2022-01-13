@@ -79,6 +79,32 @@ def get_pixel(username: str, graphname: str, date: datetime.datetime):
     return res.json()
 
 
+def update_pixel(username: str, graphname: str, date: datetime.datetime, quantity: str = "1"):
+    with open(f"{config.USER_TOKEN_NAME}.txt") as f:
+        usertoken = f.read()
+    graphid = _get_graph_id_from_name(graphname)
+    # /v1/users/<username>/graphs/<graphID>/<yyyyMMdd>
+    url = f"{PIXELA_ENDPOINT}/users/{username}/graphs/{graphid}/{date.strftime('%Y%m%d')}"
+    res = requests.put(url, headers={
+        "X-USER-TOKEN": usertoken
+    }, json={"quantity": quantity})
+    res.raise_for_status()
+    return res.json()
+
+
+def delete_pixel(username: str, graphname: str, date: datetime.datetime):
+    with open(f"{config.USER_TOKEN_NAME}.txt") as f:
+        usertoken = f.read()
+    graphid = _get_graph_id_from_name(graphname)
+    # /v1/users/<username>/graphs/<graphID>/<yyyyMMdd>
+    url = f"{PIXELA_ENDPOINT}/users/{username}/graphs/{graphid}/{date.strftime('%Y%m%d')}"
+    res = requests.delete(url, headers={
+        "X-USER-TOKEN": usertoken
+    })
+    res.raise_for_status()
+    return res.json()
+
+
 def get_graph_svg_url(username: str, graphname: str):
     graphid = _get_graph_id_from_name(graphname)
     url = f"{PIXELA_ENDPOINT}/users/{username}/graphs/{graphid}"
